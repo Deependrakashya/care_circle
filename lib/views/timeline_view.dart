@@ -5,6 +5,8 @@ import '../data/models/care_event.dart';
 import '../data/models/resident.dart';
 import '../view_models/resident_detail_view_model.dart';
 import '../view_models/timeline_view_model.dart';
+import '../theme/app_theme.dart';
+import '../widgets/status_chip.dart';
 
 class TimelineView extends StatelessWidget {
   const TimelineView({super.key, required this.resident});
@@ -88,56 +90,98 @@ class _TimelineContent extends StatelessWidget {
     String title;
     String status;
     String? subtitle;
+    IconData icon;
     
     switch (event) {
       case MedicationEvent():
         title = event.medicationLabel;
         status = event.status.name;
+        icon = Icons.medication_outlined;
       case MealEvent():
         title = '${event.mealType.name} meal';
         status = event.status.name;
+        icon = Icons.restaurant_outlined;
       case ActivityEvent():
         title = event.activityType;
         status = event.status.name;
+        icon = Icons.directions_walk_outlined;
         if (event.durationMinutes != null) {
           subtitle = '${event.durationMinutes} min';
         }
     }
 
-    return Column(
+    final isDelayed = status == 'delayed';
+
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          timeStr,
-          style: TextStyle(
-            color: Colors.grey[700],
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Row(
+        Column(
           children: [
-            Expanded(
-              child: Text(
-                _capitalize(title),
-                style: const TextStyle(fontWeight: FontWeight.w500),
+            const SizedBox(height: 4),
+            Container(
+              width: 12,
+              height: 12,
+              decoration: BoxDecoration(
+                color: isDelayed ? AppTheme.semanticCaution : AppTheme.primary,
+                shape: BoxShape.circle,
               ),
             ),
-            Text(
-              _capitalize(status),
-              style: TextStyle(
-                color: status == 'delayed' ? Colors.orange : Colors.grey[700],
-              ),
-            ),
+            // A simple line could go here for a full timeline, but for simplicity we keep it clean.
           ],
         ),
-        if (subtitle != null)
-          Text(subtitle, style: TextStyle(color: Colors.grey[600])),
-        if (event.note != null)
-          Text(
-            event.note!,
-            style: const TextStyle(fontStyle: FontStyle.italic),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                timeStr,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    icon,
+                    size: 20,
+                    color: AppTheme.textSecondary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _capitalize(title),
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        if (subtitle != null)
+                          Text(subtitle, style: Theme.of(context).textTheme.bodySmall),
+                        if (event.note != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            event.note!,
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  StatusChip(
+                    label: _capitalize(status),
+                    type: isDelayed ? ChipType.caution : ChipType.neutral,
+                  ),
+                ],
+              ),
+            ],
           ),
+        ),
       ],
     );
   }

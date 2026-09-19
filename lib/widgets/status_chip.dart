@@ -31,7 +31,7 @@ class StatusChip extends StatelessWidget {
         textColor = AppTheme.primary;
         break;
       case ChipType.caution:
-        bgColor = AppTheme.semanticCaution.withOpacity(0.15);
+        bgColor = AppTheme.semanticCaution.withValues(alpha: 0.15);
         textColor = AppTheme.semanticCaution;
         break;
       case ChipType.privacyShared:
@@ -47,7 +47,6 @@ class StatusChip extends StatelessWidget {
         textColor = AppTheme.privacyPrivateText;
         break;
       case ChipType.neutral:
-      default:
         bgColor = AppTheme.background;
         textColor = AppTheme.textSecondary;
         break;

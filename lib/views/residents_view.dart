@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../view_models/resident_detail_view_model.dart';
 import '../view_models/residents_view_model.dart';
+import '../widgets/resident_header.dart';
 import 'resident_detail_view.dart';
 
 class ResidentsView extends StatelessWidget {
@@ -58,27 +59,17 @@ class ResidentsView extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 for (final resident in viewModel.residents)
-                  Card(
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
                     child: Semantics(
                       selected: viewModel.selectedResident?.id == resident.id,
-                      child: ListTile(
+                      child: ResidentHeader(
                         key: ValueKey(resident.id),
-                        contentPadding: const EdgeInsets.all(16),
-                        leading: CircleAvatar(
-                          child: Text(resident.avatarInitials),
-                        ),
-                        title: Text(resident.name),
-                        subtitle: Text(
-                          '${resident.relationship}\n'
-                          '${resident.facility.name}, ${resident.facility.city}',
-                        ),
-                        isThreeLine: true,
-                        trailing: viewModel.selectedResident?.id == resident.id
-                            ? const Icon(
-                                Icons.check_circle,
-                                semanticLabel: 'Selected',
-                              )
-                            : null,
+                        initials: resident.avatarInitials,
+                        name: resident.name,
+                        relationship: resident.relationship,
+                        facilityName: '${resident.facility.name}, ${resident.facility.city}',
+                        isSelected: viewModel.selectedResident?.id == resident.id,
                         onTap: () {
                           context
                               .read<ResidentsViewModel>()

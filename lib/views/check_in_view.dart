@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../data/models/check_in_request.dart';
 import '../data/models/resident.dart';
 import '../view_models/check_in_view_model.dart';
+import '../theme/app_theme.dart';
 
 class CheckInView extends StatelessWidget {
   const CheckInView({super.key, required this.resident});
@@ -62,21 +63,34 @@ class _CheckInContentState extends State<_CheckInContent> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle, size: 64, color: Colors.green),
-            const SizedBox(height: 16),
-            Text(
-              'Request received',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Your check-in request has been recorded.',
-              textAlign: TextAlign.center,
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: const BoxDecoration(
+                color: AppTheme.primarySoft,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.check_circle_outline, size: 64, color: AppTheme.primary),
             ),
             const SizedBox(height: 24),
-            FilledButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Return to overview'),
+            Text(
+              'Request received',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Your check-in request has been recorded.\nWe will notify you when there is an update.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: AppTheme.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Return to overview'),
+              ),
             ),
           ],
         ),
@@ -87,9 +101,12 @@ class _CheckInContentState extends State<_CheckInContent> {
   Widget _buildFormView(
       BuildContext context, CheckInViewModel viewModel, bool isSubmitting) {
     return ListView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       children: [
-        const Text('What would you like an update about?'),
+        Text(
+          'What would you like an update about?',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         const SizedBox(height: 16),
         TextField(
           controller: _reasonController,
@@ -97,16 +114,32 @@ class _CheckInContentState extends State<_CheckInContent> {
           decoration: InputDecoration(
             labelText: 'Reason',
             hintText: 'e.g. General wellbeing, Medication',
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: AppTheme.border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: AppTheme.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: AppTheme.primary, width: 2),
+            ),
+            filled: true,
+            fillColor: AppTheme.surface,
             errorText: viewModel.status == CheckInSubmissionStatus.error
                 ? viewModel.errorMessage
                 : null,
           ),
           maxLines: 2,
         ),
-        const SizedBox(height: 24),
-        const Text('Urgency'),
-        const SizedBox(height: 8),
+        const SizedBox(height: 32),
+        Text(
+          'Urgency',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 16),
         SegmentedButton<CheckInUrgency>(
           segments: const [
             ButtonSegment(
@@ -119,6 +152,24 @@ class _CheckInContentState extends State<_CheckInContent> {
             ),
           ],
           selected: {_urgency},
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+              (Set<WidgetState> states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppTheme.primarySoft;
+                }
+                return AppTheme.surface;
+              },
+            ),
+            foregroundColor: WidgetStateProperty.resolveWith<Color?>(
+              (Set<WidgetState> states) {
+                if (states.contains(WidgetState.selected)) {
+                  return AppTheme.primary;
+                }
+                return AppTheme.textPrimary;
+              },
+            ),
+          ),
           onSelectionChanged: isSubmitting
               ? null
               : (Set<CheckInUrgency> newSelection) {
@@ -127,25 +178,30 @@ class _CheckInContentState extends State<_CheckInContent> {
                   });
                 },
         ),
-        const SizedBox(height: 32),
-        FilledButton(
-          onPressed: isSubmitting
-              ? null
-              : () {
-                  // Dismiss keyboard
-                  FocusScope.of(context).unfocus();
-                  viewModel.submitCheckIn(
-                    reason: _reasonController.text,
-                    urgency: _urgency,
-                  );
-                },
-          child: isSubmitting
-              ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Send request'),
+        const SizedBox(height: 40),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            onPressed: isSubmitting
+                ? null
+                : () {
+                    FocusScope.of(context).unfocus();
+                    viewModel.submitCheckIn(
+                      reason: _reasonController.text,
+                      urgency: _urgency,
+                    );
+                  },
+            child: isSubmitting
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Text('Send request'),
+          ),
         ),
       ],
     );

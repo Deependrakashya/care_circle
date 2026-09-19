@@ -36,7 +36,7 @@ class EventCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isDelayed ? AppTheme.surface.withOpacity(0.5) : AppTheme.background,
+                color: isDelayed ? AppTheme.surface.withValues(alpha: 0.5) : AppTheme.background,
                 shape: BoxShape.circle,
               ),
               child: Icon(

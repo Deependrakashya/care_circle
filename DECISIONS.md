@@ -21,5 +21,8 @@ Times are local Asia/Kolkata, 2026-09-19. Entries below record decisions made du
 | 12:00 | listRawTimeline repository skips malformed records with debug logging | Spec requires safe rejection without crashing; valid records must still display | Throwing on first malformed record; silently ignoring all errors |
 | 12:16 | Apply privacy filtering at the ViewModel layer via `Visibility` enum and `SharingPreferences` | Keeps the repository layer purely reflecting the API; ViewModels enforce business rules for the specific user role (family) | Applying privacy at the Repository layer |
 | 12:16 | ViewModels use a generic `SectionState` for independent loading of screen sections | Provides robust partial failure UI. If Vitals fail, Events still render successfully | Combining all data into a single loading state |
+| 12:20 | Adopt "Calm Reassurance" visual language (soft teal, warm off-white, soft borders) | User directed product emotional state is "peace of mind, not medical surveillance" | High-contrast clinical dashboard with heavy shadows |
+| 12:25 | Handle private vitals with a neutral, read-only masked UI state | Privacy is a normal product state, not an error. Keeps the family informed without anxiety. | Red "Error: Private" warnings |
+| 12:28 | Flatten timeline into simple, non-technical list (`EventCard`) | Avoids chronological-feed telemetry feel, adhering to "calm and accessible" direction | Overly technical logging design with dense metadata |
 
 Planned design decisions do not imply implementation. Future changes append dated rationale; preserve this history.

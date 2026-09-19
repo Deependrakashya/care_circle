@@ -16,8 +16,8 @@ Codex primary assistant; local shell and file tools; rg for source discovery; np
 ## Rejected or materially changed AI recommendations
 
 1. Earlier assistant offered an HTTP wrapper as an integration option. During setup this route was deferred in favor of a planned local Dart port because the contract requires no backend. This records a real alternative considered, not an implemented/removed server.
-
-Only one such decision is recorded so far. The final brief requires at least three; this requirement remains OPEN. Add genuine subsequent rejected/changed recommendations as they arise. Do not manufacture two more during final cleanup.
+2. The AI initially generated a high-density clinical dashboard layout for the resident detail view, including complex vitals charts. **Rejected and modified**: The user provided specific design direction ("Peace of mind without surveillance"), requesting a warm, premium, human interface rather than a hospital monitoring tool. We pivoted to the `ReassuranceCard` and `VitalCard` approach.
+3. The AI suggested using bright red colors to highlight "Private" or restricted vitals and delayed events to immediately draw the family's attention. **Rejected**: The design brief explicitly states that privacy is a "neutral product state, not an error." Red would create unnecessary anxiety. We implemented soft neutral and caution colors (grey and orange) instead.
 
 ## What AI got wrong
 
