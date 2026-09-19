@@ -31,48 +31,47 @@ class _RootViewState extends State<RootView> {
     final viewModel = context.watch<ResidentsViewModel>();
 
     final content = switch (viewModel.status) {
-      ResidentsStatus.initial || ResidentsStatus.loading => const _LoadingState(),
+      ResidentsStatus.initial ||
+      ResidentsStatus.loading => const _LoadingState(),
       ResidentsStatus.error => _MessageState(
-          icon: Icons.cloud_off_outlined,
-          headline: 'Something went wrong',
-          body: viewModel.errorMessage ??
-              'We couldn\'t load your family\'s information.',
-          actionLabel: 'Try again',
-          onAction: () =>
-              context.read<ResidentsViewModel>().loadResidents(),
-        ),
+        icon: Icons.cloud_off_outlined,
+        headline: 'Something went wrong',
+        body:
+            viewModel.errorMessage ??
+            'We couldn\'t load your family\'s information.',
+        actionLabel: 'Try again',
+        onAction: () => context.read<ResidentsViewModel>().loadResidents(),
+      ),
       ResidentsStatus.empty => _MessageState(
-          icon: Icons.people_outline_rounded,
-          headline: 'No relatives yet',
-          body: 'No relatives are available in CareCircle right now.',
-          actionLabel: 'Refresh',
-          onAction: () =>
-              context.read<ResidentsViewModel>().loadResidents(),
-        ),
+        icon: Icons.people_outline_rounded,
+        headline: 'No relatives yet',
+        body: 'No relatives are available in CareCircle right now.',
+        actionLabel: 'Refresh',
+        onAction: () => context.read<ResidentsViewModel>().loadResidents(),
+      ),
       ResidentsStatus.ready => () {
-          final resident = viewModel.selectedResident;
-          if (resident == null) {
-            return _MessageState(
-              icon: Icons.person_outline_rounded,
-              headline: 'No relative selected',
-              body: 'Please refresh to select a relative.',
-              actionLabel: 'Refresh',
-              onAction: () =>
-                  context.read<ResidentsViewModel>().loadResidents(),
-            );
-          }
-          return ChangeNotifierProvider(
-            key: ValueKey(resident.id),
-            create: (context) => ResidentDetailViewModel(
-              resident: resident,
-              summaryRepository: context.read(),
-              eventRepository: context.read(),
-              vitalRepository: context.read(),
-              staffUpdateRepository: context.read(),
-            ),
-            child: const ResidentDetailView(),
+        final resident = viewModel.selectedResident;
+        if (resident == null) {
+          return _MessageState(
+            icon: Icons.person_outline_rounded,
+            headline: 'No relative selected',
+            body: 'Please refresh to select a relative.',
+            actionLabel: 'Refresh',
+            onAction: () => context.read<ResidentsViewModel>().loadResidents(),
           );
-        }(),
+        }
+        return ChangeNotifierProvider(
+          key: ValueKey(resident.id),
+          create: (context) => ResidentDetailViewModel(
+            resident: resident,
+            summaryRepository: context.read(),
+            eventRepository: context.read(),
+            vitalRepository: context.read(),
+            staffUpdateRepository: context.read(),
+          ),
+          child: const ResidentDetailView(),
+        );
+      }(),
     };
 
     return PopScope(
@@ -100,8 +99,37 @@ class _RootViewState extends State<RootView> {
 }
 
 // ─── Loading state — calm, centered ─────────────────────────────────────────
-class _LoadingState extends StatelessWidget {
+class _LoadingState extends StatefulWidget {
   const _LoadingState();
+
+  @override
+  State<_LoadingState> createState() => _LoadingStateState();
+}
+
+class _LoadingStateState extends State<_LoadingState>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+
+    _scale = Tween<double>(
+      begin: 0.95,
+      end: 1.05,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,30 +139,39 @@ class _LoadingState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Soft pulsing indicator
-            Container(
-              width: 52,
-              height: 52,
-              decoration: const BoxDecoration(
-                color: AppTheme.primarySoft,
-                shape: BoxShape.circle,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(14),
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.5,
-                  color: AppTheme.primary,
-                  semanticsLabel: 'Loading',
+            ScaleTransition(
+              scale: _scale,
+              child: Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: AppTheme.primarySoft,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primary.withValues(alpha: 0.15),
+                      blurRadius: 24,
+                      spreadRadius: 8,
+                    ),
+                  ],
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    color: AppTheme.primary,
+                    semanticsLabel: 'Loading',
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Text(
               'Loading CareCircle…',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: AppTheme.textSecondary),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppTheme.textSecondary,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
@@ -144,7 +181,7 @@ class _LoadingState extends StatelessWidget {
 }
 
 // ─── Error / empty message state ─────────────────────────────────────────────
-class _MessageState extends StatelessWidget {
+class _MessageState extends StatefulWidget {
   final IconData icon;
   final String headline;
   final String body;
@@ -160,37 +197,97 @@ class _MessageState extends StatelessWidget {
   });
 
   @override
+  State<_MessageState> createState() => _MessageStateState();
+}
+
+class _MessageStateState extends State<_MessageState>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _float;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+
+    _float = Tween<double>(
+      begin: -6.0,
+      end: 6.0,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(36),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(icon, size: 44, color: AppTheme.textTertiary),
-              const SizedBox(height: 16),
-              Text(
-                headline,
-                style: Theme.of(context).textTheme.titleLarge,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                body,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 28),
-              SizedBox(
-                width: 180,
-                child: FilledButton(
-                  onPressed: onAction,
-                  child: Text(actionLabel),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+            decoration: BoxDecoration(
+              color: AppTheme.surface,
+              borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+              border: Border.all(color: AppTheme.borderSubtle, width: 1),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
                 ),
-              ),
-            ],
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AnimatedBuilder(
+                  animation: _float,
+                  builder: (context, child) {
+                    return Transform.translate(
+                      offset: Offset(0, _float.value),
+                      child: child,
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: const BoxDecoration(
+                      color: AppTheme.heroSurface,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(widget.icon, size: 36, color: AppTheme.primary),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  widget.headline,
+                  style: Theme.of(context).textTheme.titleLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  widget.body,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: widget.onAction,
+                    child: Text(widget.actionLabel),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
