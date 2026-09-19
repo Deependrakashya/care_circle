@@ -1,0 +1,42 @@
+[
+  {
+    "id": "resident-meera",
+    "name": "Meera Kapoor",
+    "avatarInitials": "MK",
+    "relationship": "Mother",
+    "facility": {
+      "id": "gurugram-01",
+      "name": "CareCircle Aravalli",
+      "city": "Gurugram"
+    },
+    "timezone": "Asia/Kolkata",
+    "sharingPreferences": {
+      "shareMedicationStatus": true,
+      "shareMealStatus": true,
+      "shareActivityDetails": true,
+      "shareVitalDetails": false,
+      "shareStaffNotes": "limited",
+      "sharePhotos": false
+    }
+  },
+  {
+    "id": "resident-devendra",
+    "name": "Devendra Kapoor",
+    "avatarInitials": "DK",
+    "relationship": "Father",
+    "facility": {
+      "id": "pune-02",
+      "name": "CareCircle Sahyadri",
+      "city": "Pune"
+    },
+    "timezone": "Asia/Kolkata",
+    "sharingPreferences": {
+      "shareMedicationStatus": true,
+      "shareMealStatus": false,
+      "shareActivityDetails": true,
+      "shareVitalDetails": true,
+      "shareStaffNotes": "none",
+      "sharePhotos": true
+    }
+  }
+]

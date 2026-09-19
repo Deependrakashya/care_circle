@@ -1,0 +1,29 @@
+[
+  {
+    "id": "note-m-101",
+    "residentId": "resident-meera",
+    "createdAt": "2026-09-19T04:35:00.000Z",
+    "authorRole": "Wellness coordinator",
+    "text": "Meera enjoyed the garden after breakfast.",
+    "mediaUrl": "https://example.invalid/private-meera-photo.jpg",
+    "visibility": "limited"
+  },
+  {
+    "id": "note-m-102",
+    "residentId": "resident-meera",
+    "createdAt": "2026-09-19T05:00:00.000Z",
+    "authorRole": "Care associate",
+    "text": "Private care note not intended for family.",
+    "mediaUrl": null,
+    "visibility": "resident_only"
+  },
+  {
+    "id": "note-d-201",
+    "residentId": "resident-devendra",
+    "createdAt": "2026-09-19T04:55:00.000Z",
+    "authorRole": "Physiotherapy team",
+    "text": null,
+    "mediaUrl": "https://example.invalid/intentionally-broken-image.jpg",
+    "visibility": "family"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "residentId": "resident-meera",
+    "localDate": "2026-09-19",
+    "reassuranceState": "reassuring",
+    "generatedAt": "2026-09-19T05:10:00.000Z",
+    "headline": "Meera has had a settled morning.",
+    "highlights": ["Breakfast recorded", "Morning medication recorded", "Joined the garden walk"]
+  },
+  {
+    "residentId": "resident-devendra",
+    "localDate": "2026-09-19",
+    "reassuranceState": "not_enough_information",
+    "generatedAt": "2026-09-18T14:30:00.000Z",
+    "headline": "There are only a few updates for Devendra today.",
+    "highlights": []
+  }
+]

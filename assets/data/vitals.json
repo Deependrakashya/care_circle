@@ -1,0 +1,22 @@
+[
+  {
+    "id": "v-m-101",
+    "residentId": "resident-meera",
+    "type": "blood_pressure",
+    "value": "124/78",
+    "unit": "mmHg",
+    "measuredAt": "2026-09-19T03:30:00.000Z",
+    "referenceLabel": "Within care-plan range",
+    "visibility": "resident_only"
+  },
+  {
+    "id": "v-d-201",
+    "residentId": "resident-devendra",
+    "type": "heart_rate",
+    "value": 74,
+    "unit": "bpm",
+    "measuredAt": "2026-09-19T04:10:00.000Z",
+    "referenceLabel": null,
+    "visibility": "family"
+  }
+]

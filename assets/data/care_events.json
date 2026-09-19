@@ -1,0 +1,68 @@
+[
+  {
+    "id": "evt-m-101",
+    "residentId": "resident-meera",
+    "category": "medication",
+    "medicationLabel": "Morning medication",
+    "status": "taken",
+    "scheduledAt": "2026-09-19T02:30:00.000Z",
+    "recordedAt": "2026-09-19T02:41:00.000Z",
+    "visibility": "family",
+    "note": null
+  },
+  {
+    "id": "evt-m-102",
+    "residentId": "resident-meera",
+    "category": "meal",
+    "mealType": "breakfast",
+    "status": "completed",
+    "scheduledAt": "2026-09-19T02:45:00.000Z",
+    "recordedAt": "2026-09-19T03:05:00.000Z",
+    "visibility": "family",
+    "note": "Ate well."
+  },
+  {
+    "id": "evt-m-103",
+    "residentId": "resident-meera",
+    "category": "activity",
+    "activityType": "Garden walk",
+    "status": "completed",
+    "durationMinutes": 22,
+    "recordedAt": "2026-09-19T04:20:00.000Z",
+    "visibility": "family",
+    "note": "Walked with the morning group."
+  },
+  {
+    "id": "evt-m-104",
+    "residentId": "resident-meera",
+    "category": "medication",
+    "medicationLabel": "Private medication",
+    "status": "taken",
+    "scheduledAt": "2026-09-19T05:00:00.000Z",
+    "recordedAt": "2026-09-19T05:03:00.000Z",
+    "visibility": "resident_only",
+    "note": "This event must not be exposed to family."
+  },
+  {
+    "id": "evt-d-201",
+    "residentId": "resident-devendra",
+    "category": "activity",
+    "activityType": "Physiotherapy",
+    "status": "completed",
+    "durationMinutes": null,
+    "recordedAt": "2026-09-19T04:50:00.000Z",
+    "visibility": "family",
+    "note": null
+  },
+  {
+    "id": "evt-d-202",
+    "residentId": "resident-devendra",
+    "category": "medication",
+    "medicationLabel": "Morning medication",
+    "status": "delayed",
+    "scheduledAt": "2026-09-19T03:00:00.000Z",
+    "recordedAt": "2026-09-19T03:42:00.000Z",
+    "visibility": "family",
+    "note": "Resident was at physiotherapy."
+  }
+]
