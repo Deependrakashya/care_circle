@@ -119,5 +119,53 @@ Changed:
 Rejected / deferred:
 - Glassmorphism, heavy shadows, neon colors, large gradients.
 - New features or screens not already present.
-- Custom font assets (retained system font; avoids build complexity).
 
+## 2026-09-19 14:00 — CareCircle Visual Identity: Care Pulse + Resident Agency
+
+Decision:
+Introduced a subtle CareCircle visual identity centered on the Care Pulse
+motif, resident-controlled sharing language, and story-like daily moments.
+
+Why:
+The existing interface was functional and calm but visually generic. This
+creative layer adds memorability while reinforcing reassurance, human
+connection, and resident autonomy — without introducing monitoring aesthetics.
+
+Changed:
+- Care Pulse: three low-opacity concentric circles behind the reassurance icon
+  (teal for settled, warm amber for insufficient-data). Clipped to card,
+  positioned top-right, never covers content.
+- Entrance animation: ReassuranceCard fades and slides up 4px on screen load
+  (500ms, easeOut, one-shot). Communicates information arriving, not data
+  updating.
+- "Shared with you by [Name]": appears below the freshness row in the hero
+  card (settled state only) and as a subtle footer in the privacy card.
+  Reinforces resident agency as a product principle.
+- Contextual greeting: "Good morning/afternoon/evening" above the resident
+  header — focuses attention on the person, not the interface.
+- Staggered event card entrance: each of the 3 moment cards fades in with a
+  60ms offset, giving a gentle "day unfolding" rhythm.
+- Check-in success: animated scale+fade for the check circle (0.6→1.0 with
+  easeOutBack, 380ms), text fades after icon settles. Calm confirmation,
+  not celebratory.
+
+Rejected:
+- Animated heartbeat/ECG lines — conflict with product direction.
+- Glassmorphism, neon gradients, confetti.
+- Gamification, badges, streaks.
+- Live-status dots suggesting continuous surveillance.
+- Breathing/looping pulse animation — one-shot entrance is sufficient.
+- Decorative character illustrations.
+
+## 2026-09-19 14:20 — Custom Typography: Open Sans
+
+Decision:
+Adopted the Open Sans font family for the entire application, replacing the default system font.
+
+Why:
+A custom font further elevates the application from a generic prototype to a premium consumer product, aligning with the design goals of warmth, trust, and a cohesive visual identity.
+
+Changed:
+- Added Open Sans `.ttf` files to `assets/fonts/Open_Sans/static/`.
+- Declared the font family in `pubspec.yaml` with associated weights and styles.
+- Updated `AppTheme` to use `fontFamily: 'OpenSans'` as the global default.

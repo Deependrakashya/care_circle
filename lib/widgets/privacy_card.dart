@@ -72,6 +72,31 @@ class PrivacyCard extends StatelessWidget {
 
             // Privacy items — compact rows
             ...items.map((item) => _buildRow(context, item)),
+
+            // Subtle agency footer
+            const SizedBox(height: 8),
+            Container(
+              height: 1,
+              color: AppTheme.borderSubtle,
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Icon(
+                  Icons.shield_outlined,
+                  size: 11,
+                  color: AppTheme.textSecondary,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  'Shared with you by $firstName',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppTheme.textSecondary,
+                        fontStyle: FontStyle.italic,
+                      ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

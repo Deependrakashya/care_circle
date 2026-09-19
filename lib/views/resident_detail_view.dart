@@ -28,6 +28,14 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
     });
   }
 
+  // ── Contextual greeting based on local time ────────────────────────────────
+  String get _greeting {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<ResidentDetailViewModel>();
@@ -54,12 +62,24 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
               ),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
+                  // ── Contextual greeting ────────────────────────────────────
+                  Text(
+                    _greeting,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppTheme.textTertiary,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.1,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+
                   // ── Resident identity header ───────────────────────────────
                   ResidentHeader(
                     initials: resident.avatarInitials,
                     name: resident.name,
                     relationship: resident.relationship,
-                    facilityName: '${resident.facility.name}, ${resident.facility.city}',
+                    facilityName:
+                        '${resident.facility.name}, ${resident.facility.city}',
                     showChevron: true,
                     onTap: () {
                       showModalBottomSheet(
@@ -69,7 +89,7 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
                       );
                     },
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
                   // ── Reassurance hero ───────────────────────────────────────
                   _buildSummarySection(context, viewModel),
@@ -97,16 +117,14 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
     );
   }
 
-  // ─── Summary / Reassurance hero ─────────────────────────────────────────────
+  // ─── Reassurance hero ────────────────────────────────────────────────────────
   Widget _buildSummarySection(
       BuildContext context, ResidentDetailViewModel viewModel) {
-    // Loading state — skeleton-style placeholder
     if (viewModel.summary.status == SectionStatus.loading ||
         viewModel.summary.status == SectionStatus.initial) {
       return _ReassuranceSkeleton();
     }
 
-    // Error state
     if (viewModel.summary.status == SectionStatus.error) {
       return _ErrorSurface(
         message:
@@ -124,13 +142,16 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
         (now.difference(summary.generatedAt).inHours > 24 ||
             now.day != summary.generatedAt.day);
 
+    final firstName = viewModel.resident.name.split(' ').first;
+
     if (isStale) {
       return ReassuranceCard(
         headline: "There isn't enough information yet.",
         explanation:
-            'A few updates have been recorded today, but there isn\'t enough for a full picture.',
+            "A few updates have been recorded today, but there isn't enough for a full picture.",
         lastUpdated: latestUpdate,
         isInsufficientData: true,
+        // No "Shared with you" cue on insufficient-data state
         onRequestCheckIn: () {
           showModalBottomSheet(
             context: context,
@@ -147,10 +168,11 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
           (summary.highlights.isNotEmpty ? summary.highlights.first : null),
       lastUpdated: latestUpdate,
       isInsufficientData: false,
+      residentFirstName: firstName, // enables "Shared with you by Meera"
     );
   }
 
-  // ─── Events section ──────────────────────────────────────────────────────────
+  // ─── Events section ───────────────────────────────────────────────────────────
   Widget _buildEventsSection(
       BuildContext context, ResidentDetailViewModel viewModel) {
     if (viewModel.events.status == SectionStatus.loading ||
@@ -180,12 +202,16 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
                     builder: (_) => TimelineView(resident: viewModel.resident),
                   ),
                 ),
-                child: Text(
-                  'See all',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                behavior: HitTestBehavior.opaque,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  child: Text(
+                    'See all',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppTheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
                 ),
               ),
           ],
@@ -193,9 +219,17 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
         const SizedBox(height: 12),
 
         if (events.isEmpty)
-          _EmptyMoments()
+          const _EmptyMoments()
         else
-          ...events.take(3).map(_buildEventItem),
+          // Staggered entrance for event cards
+          ...events.take(3).toList().asMap().entries.map((entry) {
+            final idx = entry.key;
+            final event = entry.value;
+            return _StaggeredEventCard(
+              index: idx,
+              child: _buildEventItem(event),
+            );
+          }),
 
         const SizedBox(height: 24),
       ],
@@ -227,8 +261,9 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
           title: event.activityType,
           status: event.status.name,
           time: event.recordedAt,
-          subtitle:
-              event.durationMinutes != null ? '${event.durationMinutes} min' : null,
+          subtitle: event.durationMinutes != null
+              ? '${event.durationMinutes} min'
+              : null,
           note: event.note,
           icon: Icons.directions_walk_outlined,
           isDelayed: event.status.name == 'delayed',
@@ -236,7 +271,7 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
     }
   }
 
-  // ─── Check-in CTA ────────────────────────────────────────────────────────────
+  // ─── Check-in CTA ─────────────────────────────────────────────────────────────
   Widget _buildCheckInCta(
       BuildContext context, ResidentDetailViewModel viewModel) {
     return Container(
@@ -255,7 +290,7 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
           ),
           const SizedBox(height: 6),
           Text(
-            'You can request a check-in from CareCircle staff.',
+            'You can request a check-in from the care team.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 18),
@@ -278,7 +313,57 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
       s.isNotEmpty ? '${s[0].toUpperCase()}${s.substring(1)}' : s;
 }
 
-// ─── Skeleton placeholder for reassurance card ──────────────────────────────
+// ─── Staggered card entrance ─────────────────────────────────────────────────
+class _StaggeredEventCard extends StatefulWidget {
+  final int index;
+  final Widget child;
+  const _StaggeredEventCard({required this.index, required this.child});
+
+  @override
+  State<_StaggeredEventCard> createState() => _StaggeredEventCardState();
+}
+
+class _StaggeredEventCardState extends State<_StaggeredEventCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _fade;
+  late final Animation<Offset> _slide;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 320),
+    );
+    _fade = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _slide = Tween<Offset>(
+      begin: const Offset(0, 0.05),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
+
+    // Stagger: 60ms per card — feels like the day unfolds
+    Future.delayed(Duration(milliseconds: widget.index * 60), () {
+      if (mounted) _ctrl.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fade,
+      child: SlideTransition(position: _slide, child: widget.child),
+    );
+  }
+}
+
+// ─── Skeleton placeholder ─────────────────────────────────────────────────────
 class _ReassuranceSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -325,8 +410,10 @@ class _Shimmer extends StatelessWidget {
   }
 }
 
-// ─── Empty moments state ─────────────────────────────────────────────────────
+// ─── Empty moments state ──────────────────────────────────────────────────────
 class _EmptyMoments extends StatelessWidget {
+  const _EmptyMoments();
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -338,8 +425,7 @@ class _EmptyMoments extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(Icons.wb_sunny_outlined,
-              size: 32, color: AppTheme.textTertiary),
+          Icon(Icons.wb_sunny_outlined, size: 32, color: AppTheme.textTertiary),
           const SizedBox(height: 10),
           Text(
             'No recent updates yet',
@@ -359,7 +445,7 @@ class _EmptyMoments extends StatelessWidget {
   }
 }
 
-// ─── Error surface ───────────────────────────────────────────────────────────
+// ─── Error surface ────────────────────────────────────────────────────────────
 class _ErrorSurface extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
@@ -405,8 +491,8 @@ class _ErrorSurface extends StatelessWidget {
               onPressed: onRetry,
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(120, 40),
-                side: const BorderSide(
-                    color: AppTheme.semanticCaution, width: 1),
+                side:
+                    const BorderSide(color: AppTheme.semanticCaution, width: 1),
                 foregroundColor: AppTheme.semanticCaution,
               ),
               child: const Text('Retry'),
