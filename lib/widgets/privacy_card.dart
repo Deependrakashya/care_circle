@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../data/models/sharing_preferences.dart';
 import '../theme/app_theme.dart';
-import 'status_chip.dart';
 
 class PrivacyCard extends StatelessWidget {
   final String residentName;
@@ -15,87 +14,109 @@ class PrivacyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    // Build the first-name for a friendlier label
+    final firstName = residentName.split(' ').first;
+
+    final items = <_PrivacyItem>[
+      _PrivacyItem(
+        label: 'Medication',
+        shared: preferences.shareMedicationStatus,
+      ),
+      _PrivacyItem(
+        label: 'Meals',
+        shared: preferences.shareMealStatus,
+      ),
+      _PrivacyItem(
+        label: 'Activities',
+        shared: preferences.shareActivityDetails,
+      ),
+      _PrivacyItem(
+        label: 'Vitals',
+        shared: preferences.shareVitalDetails,
+      ),
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.surface,
+        borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+        border: Border.all(color: AppTheme.borderSubtle, width: 1),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(AppTheme.cardPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Header row
             Row(
               children: [
-                const Icon(Icons.shield_outlined, color: AppTheme.primary),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'Privacy & sharing',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                const Icon(
+                  Icons.shield_outlined,
+                  color: AppTheme.primary,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Privacy & sharing',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ],
             ),
             const SizedBox(height: 8),
             Text(
-              '$residentName controls what is shared with family.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppTheme.textSecondary,
-                  ),
+              '$firstName chooses what is shared with family.',
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
-            const SizedBox(height: 24),
-            _buildRow('Medication', preferences.shareMedicationStatus ? 'Shared' : 'Private'),
-            const Divider(),
-            _buildRow('Meals', preferences.shareMealStatus ? 'Shared' : 'Private'),
-            const Divider(),
-            _buildRow('Activities', preferences.shareActivityDetails ? 'Shared' : 'Private'),
-            const Divider(),
-            _buildRow('Vitals', preferences.shareVitalDetails ? 'Shared' : 'Private'),
-            const Divider(),
-            _buildRow('Photos', preferences.sharePhotos ? 'Shared' : 'Private'),
-            const Divider(),
-            _buildRow('Staff notes', _capitalize(preferences.shareStaffNotes.name)),
+
+            const SizedBox(height: 16),
+
+            // Privacy items — compact rows
+            ...items.map((item) => _buildRow(context, item)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildRow(String label, String value) {
-    ChipType type;
-    switch (value.toLowerCase()) {
-      case 'shared':
-      case 'full':
-        type = ChipType.privacyShared;
-        break;
-      case 'limited':
-      case 'summary':
-        type = ChipType.privacyLimited;
-        break;
-      case 'private':
-      case 'none':
-      default:
-        type = ChipType.privacyPrivate;
-        break;
-    }
+  Widget _buildRow(BuildContext context, _PrivacyItem item) {
+    final chipBg   = item.shared ? AppTheme.privacyShared : AppTheme.privacyPrivate;
+    final chipText = item.shared ? AppTheme.privacySharedText : AppTheme.privacyPrivateText;
+    final label    = item.shared ? 'Shared' : 'Private';
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            label,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+            item.label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppTheme.textPrimary,
+                  fontWeight: FontWeight.w500,
+                ),
           ),
-          StatusChip(
-            label: value == 'summary' ? 'Limited' : _capitalize(value),
-            type: type,
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: chipBg,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: chipText,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  String _capitalize(String s) {
-    if (s == 'none') return 'Private';
-    return s.isNotEmpty ? '${s[0].toUpperCase()}${s.substring(1)}' : s;
-  }
+class _PrivacyItem {
+  final String label;
+  final bool shared;
+  const _PrivacyItem({required this.label, required this.shared});
 }

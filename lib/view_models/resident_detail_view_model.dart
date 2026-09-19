@@ -69,6 +69,38 @@ class ResidentDetailViewModel extends ChangeNotifier {
   SectionState<List<VitalReading>> get vitals => _vitals;
   SectionState<List<StaffUpdate>> get staffUpdates => _staffUpdates;
 
+  DateTime? get latestCareUpdate {
+    if (_events.data == null || _events.data!.isEmpty) return null;
+    return _events.data!
+        .map((e) => e.recordedAt)
+        .reduce((a, b) => a.isAfter(b) ? a : b);
+  }
+
+  String? get derivedExplanation {
+    final eventsList = _events.data;
+    if (eventsList == null || eventsList.isEmpty) return null;
+
+    final labels = eventsList.map((e) {
+      if (e is MedicationEvent) return e.medicationLabel.toLowerCase();
+      if (e is MealEvent) return '${e.mealType.name.toLowerCase()} meal';
+      if (e is ActivityEvent) return e.activityType.toLowerCase();
+      return 'an update';
+    }).toList();
+
+    if (labels.length == 1) {
+      return '${_capitalize(labels.first)} has been recorded today.';
+    } else if (labels.length == 2) {
+      return '${_capitalize(labels[0])} and ${labels[1]} have been recorded today.';
+    } else {
+      final allButLast = labels.sublist(0, labels.length - 1).join(', ');
+      final last = labels.last;
+      return '${_capitalize(allButLast)}, and $last have been recorded today.';
+    }
+  }
+
+  String _capitalize(String s) =>
+      s.isNotEmpty ? '${s[0].toUpperCase()}${s.substring(1)}' : s;
+
   bool _disposed = false;
 
   @override

@@ -23,79 +23,129 @@ class ResidentHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget content = Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Row(
-        children: [
+    // Compact identity row — used both inline (Home) and in the picker sheet
+    Widget row = Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Avatar
+        Container(
+          width: 52,
+          height: 52,
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppTheme.primary.withValues(alpha: 0.15)
+                : AppTheme.primarySoft,
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            initials,
+            style: TextStyle(
+              color: AppTheme.primary,
+              fontWeight: FontWeight.w700,
+              fontSize: 18,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        const SizedBox(width: 14),
+
+        // Text block
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                name,
+                style: Theme.of(context).textTheme.headlineSmall,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                relationship,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppTheme.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+              const SizedBox(height: 1),
+              Text(
+                facilityName,
+                style: Theme.of(context).textTheme.bodySmall,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+
+        // Trailing indicator
+        if (isSelected)
           Container(
-            width: 56,
-            height: 56,
+            width: 26,
+            height: 26,
             decoration: const BoxDecoration(
-              color: AppTheme.primarySoft,
+              color: AppTheme.primary,
               shape: BoxShape.circle,
             ),
-            alignment: Alignment.center,
-            child: Text(
-              initials,
-              style: const TextStyle(
-                color: AppTheme.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
+            child: const Icon(Icons.check, color: Colors.white, size: 15),
+          )
+        else if (showChevron && onTap != null)
+          const Icon(
+            Icons.chevron_right_rounded,
+            color: AppTheme.textTertiary,
+            size: 22,
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  relationship,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  facilityName,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
-          ),
-          if (isSelected)
-            const Icon(
-              Icons.check_circle,
-              color: AppTheme.primary,
-            ),
-          if (!isSelected && onTap != null && showChevron)
-            const Icon(
-              Icons.chevron_right,
-              color: AppTheme.textSecondary,
-            )
-        ],
-      ),
+      ],
     );
 
-    if (onTap == null) {
-      return content; // Used in details page without card background
+    // ── Inline header (no card wrapper) — used on Home screen ───────────────
+    if (!isSelected && onTap != null && showChevron) {
+      // Wrap in tappable surface with very subtle border
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: row,
+          ),
+        ),
+      );
     }
 
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-        side: isSelected
-            ? const BorderSide(color: AppTheme.primary, width: 2)
-            : const BorderSide(color: AppTheme.border, width: 1),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: content,
-      ),
-    );
+    // ── Picker card — used inside resident picker sheet ──────────────────────
+    if (onTap != null) {
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primarySoft : AppTheme.surface,
+          borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+          border: Border.all(
+            color: isSelected
+                ? AppTheme.primary.withValues(alpha: 0.3)
+                : AppTheme.borderSubtle,
+            width: 1,
+          ),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              child: row,
+            ),
+          ),
+        ),
+      );
+    }
+
+    // ── Static (no interaction) ──────────────────────────────────────────────
+    return row;
   }
 }

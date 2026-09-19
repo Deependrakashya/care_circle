@@ -26,3 +26,98 @@ Times are local Asia/Kolkata, 2026-09-19. Entries below record decisions made du
 | 12:28 | Flatten timeline into simple, non-technical list (`EventCard`) | Avoids chronological-feed telemetry feel, adhering to "calm and accessible" direction | Overly technical logging design with dense metadata |
 
 Planned design decisions do not imply implementation. Future changes append dated rationale; preserve this history.
+
+## 13:00 — Reduce clinical detail and move to reassurance-first disclosure
+
+Decision:
+Revised the primary family experience after the client clarified that
+CareCircle should answer "Is my parent okay?" rather than function as
+a health dashboard.
+
+The Home screen will prioritize a concise reassurance state, freshness,
+and a small number of everyday supporting moments. Detailed clinical
+information such as vitals will not be part of the primary V1 experience.
+
+Supporting information will use progressive disclosure instead of being
+presented as a monitoring dashboard.
+
+Why:
+The CEO explicitly stated that families should be able to open the app
+and quickly know their parent is okay. Residents have also expressed
+concern about excessive monitoring by their children.
+
+This better supports both family reassurance and resident autonomy.
+
+Changed:
+- Reduced prominence of individual care metrics.
+- Removed vitals from the primary Home experience.
+- Reframed timeline as "Today's moments" / "Recent updates."
+- Made resident-controlled sharing explicit.
+- Preserved check-in as the recovery path when information is insufficient.
+
+Rejected / deferred:
+- Health dashboard.
+- Vital charts.
+- Clinical status interpretation.
+- Exposing all available backend information simply because it exists.
+
+## 13:25 — Transition to Immediate Reassurance Startup
+
+Decision:
+Changed the startup experience from resident selection to direct resident reassurance overview.
+
+Why:
+The CEO clarified that the primary product value is immediate reassurance rather than monitoring. Requiring a selection screen before showing reassurance adds unnecessary friction.
+
+Changed:
+- Overview is now the clean-launch screen.
+- Resident switching remains available from the header.
+- Clinical information is secondary.
+- Refresh is no longer a primary action.
+- Privacy is surfaced explicitly.
+- Check-in is the escalation path for insufficient information.
+
+Rejected / deferred:
+- Dashboard-first navigation.
+- Prominent manual refresh.
+- Vitals-first presentation.
+- Mandatory resident selection on every launch.
+
+## 2026-09-19 13:40 — UI Polish: Prototype → Premium Consumer Product
+
+Decision:
+Upgraded the entire CareCircle Flutter UI from a functional prototype to a
+polished premium consumer product without changing product logic, navigation
+structure, or API behavior.
+
+Why:
+The judges' first impression should communicate "warm, trustworthy, calm,
+human" — not "generic hackathon app". Visual hierarchy and component quality
+materially affect perceived product credibility.
+
+Changed:
+- Design tokens: tighter surface hierarchy (background / card / hero),
+  improved typography scale (27/23/20/17/15/14/12), consistent spacing
+  constants (pagePadding=20, sectionGap=24, heroRadius=24, buttonHeight=54).
+- ReassuranceCard: icon container, stronger headline, soft gradient border,
+  freshness divider, compact metadata row. Now feels like the emotional hero.
+- ResidentHeader: identity-component structure (not a form field), animated
+  picker selection state with filled check circle.
+- EventCard: compact single-row status+time metadata, 42px icon circle,
+  removed StatusChip in favor of inline text. Height reduced ~35%.
+- PrivacyCard: now shows actual Medication/Meals/Activities/Vitals sharing
+  state with color-coded chips. No red used for Private.
+- Home screen (ResidentDetailView): CustomScrollView layout, collapsible
+  AppBar, "Today's moments" with "See all" link, check-in framed as CTA card.
+- Timeline: dot+connector vertical rail, card-per-event, skeleton loading rows,
+  warm empty/error states.
+- Check-in sheet: handle bar, animated custom option chips, premium success
+  state, 54px FilledButton.
+- Resident picker: handle bar, animated card selection, no redundant label text.
+- Root view: warm loading state, human-language error/empty states with icons.
+
+Rejected / deferred:
+- Glassmorphism, heavy shadows, neon colors, large gradients.
+- New features or screens not already present.
+- Custom font assets (retained system font; avoids build complexity).
+
