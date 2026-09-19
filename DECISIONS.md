@@ -169,3 +169,54 @@ Changed:
 - Added Open Sans `.ttf` files to `assets/fonts/Open_Sans/static/`.
 - Declared the font family in `pubspec.yaml` with associated weights and styles.
 - Updated `AppTheme` to use `fontFamily: 'OpenSans'` as the global default.
+
+## 15:10 — Vitals upstream incident
+
+Context:
+CareCircle integration team reported intermittent 503 responses from
+the vitals service with no confirmed recovery time. Other services
+remain available.
+
+Decision:
+Treat vitals as an independently unavailable data source rather than
+failing the resident experience.
+
+Behavior:
+- Daily summary, care events, staff updates and check-in continue working.
+- Vitals failure is handled locally.
+- No clinical values are invented or inferred.
+- No aggressive automatic retry is performed.
+- A manual retry is available where vitals are normally visible.
+- The outage is not surfaced for residents whose family does not have
+  permission to view detailed vitals (e.g., Meera).
+
+Why:
+A backend availability problem should not be interpreted as a resident
+health problem or prevent families from using other trustworthy updates.
+
+Rejected:
+- Full-screen error.
+- Global alarming outage banner.
+- Cached/invented vital values presented as current.
+- Continuous automatic retry.
+
+## 2026-09-19 16:15 — Multi-relative support before freeze
+
+Context:
+The CEO requested support for families with multiple elderly relatives across different CareCircle facilities with only 90 minutes remaining before product freeze.
+
+Decision:
+Support multiple relatives through the existing resident-switching experience. Each resident retains an independent reassurance, privacy, freshness, recent-moments, and check-in experience.
+
+Why:
+The existing architecture and supplied fixture data already support multiple residents at different facilities. Extending the current selector satisfies the request with minimal delivery risk.
+
+Deferred:
+- combined family dashboard
+- aggregated clinical data
+- cross-resident comparisons
+- facility comparison
+- advanced multi-relative management
+
+Demo protection:
+This approach avoids introducing high-risk architecture or new workflows immediately before freeze while preserving the primary reassurance-first demo.

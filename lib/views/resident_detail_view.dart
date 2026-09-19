@@ -8,9 +8,11 @@ import '../widgets/resident_header.dart';
 import '../widgets/reassurance_card.dart';
 import '../widgets/event_card.dart';
 import '../widgets/privacy_card.dart';
+import '../widgets/staff_update_card.dart';
 import 'resident_picker_sheet.dart';
 import 'check_in_sheet.dart';
 import 'timeline_view.dart';
+import '../widgets/vital_card.dart';
 
 class ResidentDetailView extends StatefulWidget {
   const ResidentDetailView({super.key});
@@ -65,13 +67,13 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
                   // ── Contextual greeting ────────────────────────────────────
                   Text(
                     _greeting,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.textTertiary,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.1,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: AppTheme.textSecondary,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.2,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
 
                   // ── Resident identity header ───────────────────────────────
                   ResidentHeader(
@@ -97,6 +99,12 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
 
                   // ── Today's moments ────────────────────────────────────────
                   _buildEventsSection(context, viewModel),
+
+                  // ── Vitals ───────────────────────────────────────────────────
+                  _buildVitalsSection(context, viewModel),
+
+                  // ── Staff Updates ────────────────────────────────────────────
+                  _buildStaffUpdatesSection(context, viewModel),
 
                   // ── Privacy & sharing ──────────────────────────────────────
                   PrivacyCard(
@@ -281,6 +289,117 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
     }
   }
 
+  // ─── Vitals section ──────────────────────────────────────────────────────────
+  Widget _buildVitalsSection(
+    BuildContext context,
+    ResidentDetailViewModel viewModel,
+  ) {
+    if (!viewModel.resident.sharingPreferences.shareVitalDetails) {
+      return const SizedBox.shrink();
+    }
+
+    if (viewModel.vitals.status == SectionStatus.loading ||
+        viewModel.vitals.status == SectionStatus.initial) {
+      return const SizedBox.shrink();
+    }
+
+    if (viewModel.vitals.status == SectionStatus.error) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Vitals', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: AppTheme.surface,
+              borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+              border: Border.all(color: AppTheme.borderSubtle, width: 1),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(AppTheme.cardPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Temporarily unavailable',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  "CareCircle's vitals service is currently unavailable.\nYour other CareCircle updates are still available.",
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 16),
+                OutlinedButton(
+                  onPressed: () => viewModel.loadVitals(),
+                  child: const Text('Try again'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+        ],
+      );
+    }
+
+    final vitalsList = viewModel.vitals.data ?? [];
+    if (vitalsList.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Vitals', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 12),
+        ...vitalsList.map(
+          (v) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: VitalCard(vital: v),
+          ),
+        ),
+        const SizedBox(height: 14),
+      ],
+    );
+  }
+
+  // ─── Staff Updates section ───────────────────────────────────────────────────
+  Widget _buildStaffUpdatesSection(
+    BuildContext context,
+    ResidentDetailViewModel viewModel,
+  ) {
+    if (viewModel.staffUpdates.status == SectionStatus.loading ||
+        viewModel.staffUpdates.status == SectionStatus.initial) {
+      return const SizedBox.shrink();
+    }
+
+    final updates = viewModel.staffUpdates.data ?? [];
+    if (updates.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Care team notes', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 12),
+        ...updates.map(
+          (update) => StaffUpdateCard(
+            authorRole: update.authorRole,
+            text: update.text,
+            mediaUrl: update.mediaUrl,
+            time: update.createdAt,
+            sharePhotos: viewModel.resident.sharingPreferences.sharePhotos,
+          ),
+        ),
+        const SizedBox(height: 24),
+      ],
+    );
+  }
+
   // ─── Check-in CTA ─────────────────────────────────────────────────────────────
   Widget _buildCheckInCta(
     BuildContext context,
@@ -291,6 +410,13 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
         color: AppTheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.cardRadius),
         border: Border.all(color: AppTheme.borderSubtle, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       padding: const EdgeInsets.all(AppTheme.cardPadding),
       child: Column(
@@ -437,6 +563,13 @@ class _EmptyMoments extends StatelessWidget {
         color: AppTheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.cardRadius),
         border: Border.all(color: AppTheme.borderSubtle, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [

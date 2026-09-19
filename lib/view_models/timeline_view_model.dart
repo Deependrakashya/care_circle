@@ -41,6 +41,13 @@ class TimelineViewModel extends ChangeNotifier {
       // Privacy filtering
       final familyTimeline = envelope.data
           .where((e) => e.visibility != Visibility.residentOnly)
+          .where((e) {
+            return switch (e) {
+              MedicationEvent() => resident.sharingPreferences.shareMedicationStatus,
+              MealEvent() => resident.sharingPreferences.shareMealStatus,
+              ActivityEvent() => resident.sharingPreferences.shareActivityDetails,
+            };
+          })
           .toList(growable: false);
 
       _timeline = SectionState(status: SectionStatus.ready, data: familyTimeline);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../data/models/sharing_preferences.dart';
 import '../theme/app_theme.dart';
+import 'status_chip.dart';
 
 class PrivacyCard extends StatelessWidget {
   final String residentName;
@@ -17,22 +18,51 @@ class PrivacyCard extends StatelessWidget {
     // Build the first-name for a friendlier label
     final firstName = residentName.split(' ').first;
 
+    ChipType getChipType(bool shared) =>
+        shared ? ChipType.privacyShared : ChipType.privacyPrivate;
+    String getLabel(bool shared) => shared ? 'Shared' : 'Private';
+
+    ChipType getNotesChipType(StaffNoteSharing sharing) => switch (sharing) {
+          StaffNoteSharing.all => ChipType.privacyShared,
+          StaffNoteSharing.limited => ChipType.privacyLimited,
+          StaffNoteSharing.none => ChipType.privacyPrivate,
+        };
+    String getNotesLabel(StaffNoteSharing sharing) => switch (sharing) {
+          StaffNoteSharing.all => 'Shared',
+          StaffNoteSharing.limited => 'Limited',
+          StaffNoteSharing.none => 'Private',
+        };
+
     final items = <_PrivacyItem>[
       _PrivacyItem(
         label: 'Medication',
-        shared: preferences.shareMedicationStatus,
+        type: getChipType(preferences.shareMedicationStatus),
+        statusLabel: getLabel(preferences.shareMedicationStatus),
       ),
       _PrivacyItem(
         label: 'Meals',
-        shared: preferences.shareMealStatus,
+        type: getChipType(preferences.shareMealStatus),
+        statusLabel: getLabel(preferences.shareMealStatus),
       ),
       _PrivacyItem(
         label: 'Activities',
-        shared: preferences.shareActivityDetails,
+        type: getChipType(preferences.shareActivityDetails),
+        statusLabel: getLabel(preferences.shareActivityDetails),
       ),
       _PrivacyItem(
         label: 'Vitals',
-        shared: preferences.shareVitalDetails,
+        type: getChipType(preferences.shareVitalDetails),
+        statusLabel: getLabel(preferences.shareVitalDetails),
+      ),
+      _PrivacyItem(
+        label: 'Staff Notes',
+        type: getNotesChipType(preferences.shareStaffNotes),
+        statusLabel: getNotesLabel(preferences.shareStaffNotes),
+      ),
+      _PrivacyItem(
+        label: 'Photos',
+        type: getChipType(preferences.sharePhotos),
+        statusLabel: getLabel(preferences.sharePhotos),
       ),
     ];
 
@@ -41,6 +71,13 @@ class PrivacyCard extends StatelessWidget {
         color: AppTheme.surface,
         borderRadius: BorderRadius.circular(AppTheme.cardRadius),
         border: Border.all(color: AppTheme.borderSubtle, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.cardPadding),
@@ -104,10 +141,6 @@ class PrivacyCard extends StatelessWidget {
   }
 
   Widget _buildRow(BuildContext context, _PrivacyItem item) {
-    final chipBg   = item.shared ? AppTheme.privacyShared : AppTheme.privacyPrivate;
-    final chipText = item.shared ? AppTheme.privacySharedText : AppTheme.privacyPrivateText;
-    final label    = item.shared ? 'Shared' : 'Private';
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -120,19 +153,9 @@ class PrivacyCard extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: chipBg,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: chipText,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
+          StatusChip(
+            label: item.statusLabel,
+            type: item.type,
           ),
         ],
       ),
@@ -142,6 +165,12 @@ class PrivacyCard extends StatelessWidget {
 
 class _PrivacyItem {
   final String label;
-  final bool shared;
-  const _PrivacyItem({required this.label, required this.shared});
+  final ChipType type;
+  final String statusLabel;
+
+  const _PrivacyItem({
+    required this.label,
+    required this.type,
+    required this.statusLabel,
+  });
 }

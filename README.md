@@ -49,6 +49,32 @@ Fictional fixture date: 2026-09-19. IDs: `resident-meera`, `resident-devendra`; 
 
 Resident assets are bundled, so running the current app needs no sibling folder. See `assets/data/README.md` for source provenance. Reference location for remaining work: `../PSI_CareCircle_Candidate_Starter_Code/`. Preserve the authoritative contract/fixtures in final source handover.
 
+## Vitals incident simulation
+
+The official CareCircle bulletin reported intermittent HTTP 503 failures
+from the vitals service.
+
+The Flutter port preserves a deterministic incident flag.
+
+Normal service:
+
+```bash
+flutter run --dart-define=VITALS_INCIDENT=false
+# OR
+./tool/incident_off.sh
+```
+
+Simulated 503 incident:
+
+```bash
+flutter run --dart-define=VITALS_INCIDENT=true
+# OR
+./tool/incident_on.sh
+```
+
+The submitted APK was built with VITALS_INCIDENT=true to reflect the
+currently active official incident.
+
 ## Verification and delivery
 
 Supplied TypeScript baseline: PASS. Flutter analysis: PASS. Android APK build: SUCCESS (`app-release.apk`). Automated test result is tracked in TEST_PLAN.

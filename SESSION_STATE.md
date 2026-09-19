@@ -12,3 +12,6 @@
 
 ## Next Implementation Steps
 - None. Task is complete.
+
+## Active Incident State
+- **Vitals 503 Outage**: Active. The upstream vitals service is currently throwing intermittent 503 errors with no confirmed recovery time. Graceful degradation is active.

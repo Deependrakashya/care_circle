@@ -61,24 +61,32 @@ class StaffUpdateCard extends StatelessWidget {
               const SizedBox(height: 16),
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Container(
+                child: Image.network(
+                  mediaUrl!,
                   height: 160,
                   width: double.infinity,
-                  color: AppTheme.background,
-                  alignment: Alignment.center,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.image_not_supported_outlined, color: AppTheme.textSecondary, size: 32),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Photo unavailable',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.textSecondary,
-                        ),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 160,
+                      width: double.infinity,
+                      color: AppTheme.background,
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.image_not_supported_outlined, color: AppTheme.textSecondary, size: 32),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Photo unavailable',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppTheme.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
               ),
             ],

@@ -32,10 +32,10 @@
     "timezone": "Asia/Kolkata",
     "sharingPreferences": {
       "shareMedicationStatus": true,
-      "shareMealStatus": false,
+      "shareMealStatus": true,
       "shareActivityDetails": true,
       "shareVitalDetails": true,
-      "shareStaffNotes": "none",
+      "shareStaffNotes": "all",
       "sharePhotos": true
     }
   }

@@ -82,7 +82,7 @@ class ResidentPickerSheet extends StatelessWidget {
                         name: resident.name,
                         relationship: resident.relationship,
                         facilityName:
-                            '${resident.facility.name}, ${resident.facility.city}',
+                            '${resident.facility.name} • ${resident.facility.city}',
                         isSelected: isSelected,
                         showChevron: false,
                         onTap: () {

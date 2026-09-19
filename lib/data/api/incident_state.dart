@@ -8,5 +8,9 @@ class IncidentState {
   IncidentState._();
 
   /// When true, [MockCareCircleApi.listVitals] throws a 503 MockApiError.
-  static bool vitals503 = false;
+  /// Controlled via `--dart-define=VITALS_INCIDENT=true|false`.
+  static const bool vitals503 = bool.fromEnvironment(
+    'VITALS_INCIDENT',
+    defaultValue: false,
+  );
 }

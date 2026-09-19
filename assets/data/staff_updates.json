@@ -5,7 +5,7 @@
     "createdAt": "2026-09-19T04:35:00.000Z",
     "authorRole": "Wellness coordinator",
     "text": "Meera enjoyed the garden after breakfast.",
-    "mediaUrl": "https://example.invalid/private-meera-photo.jpg",
+    "mediaUrl": "https://images.unsplash.com/photo-1518599904199-0ca897819ddb?auto=format&fit=crop&w=500&q=60",
     "visibility": "limited"
   },
   {
@@ -22,8 +22,8 @@
     "residentId": "resident-devendra",
     "createdAt": "2026-09-19T04:55:00.000Z",
     "authorRole": "Physiotherapy team",
-    "text": null,
-    "mediaUrl": "https://example.invalid/intentionally-broken-image.jpg",
+    "text": "Devendra had a great session today! He completed all his reps and is showing excellent progress.",
+    "mediaUrl": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=500&q=60",
     "visibility": "family"
   }
 ]

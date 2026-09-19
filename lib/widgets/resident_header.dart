@@ -32,10 +32,29 @@ class ResidentHeader extends StatelessWidget {
           width: 52,
           height: 52,
           decoration: BoxDecoration(
-            color: isSelected
-                ? AppTheme.primary.withValues(alpha: 0.15)
-                : AppTheme.primarySoft,
+            gradient: LinearGradient(
+              colors: isSelected
+                  ? [
+                      AppTheme.primarySoft,
+                      AppTheme.primary.withValues(alpha: 0.2),
+                    ]
+                  : [Colors.white, AppTheme.primarySoft],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             shape: BoxShape.circle,
+            border: Border.all(
+              color: AppTheme.primary.withValues(alpha: 0.15),
+              width: 1.5,
+            ),
+            boxShadow: [
+              if (!isSelected)
+                BoxShadow(
+                  color: AppTheme.primary.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+            ],
           ),
           alignment: Alignment.center,
           child: Text(
@@ -66,9 +85,9 @@ class ResidentHeader extends StatelessWidget {
               Text(
                 relationship,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.textSecondary,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  color: AppTheme.textSecondary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(height: 1),
               Text(
@@ -93,25 +112,46 @@ class ResidentHeader extends StatelessWidget {
             child: const Icon(Icons.check, color: Colors.white, size: 15),
           )
         else if (showChevron && onTap != null)
-          const Icon(
-            Icons.chevron_right_rounded,
-            color: AppTheme.textTertiary,
-            size: 22,
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: AppTheme.background,
+              shape: BoxShape.circle,
+              border: Border.all(color: AppTheme.borderSubtle),
+            ),
+            child: const Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: AppTheme.textTertiary,
+              size: 20,
+            ),
           ),
       ],
     );
 
     // ── Inline header (no card wrapper) — used on Home screen ───────────────
     if (!isSelected && onTap != null && showChevron) {
-      // Wrap in tappable surface with very subtle border
-      return Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
+      return Container(
+        decoration: BoxDecoration(
+          color: AppTheme.surface,
           borderRadius: BorderRadius.circular(AppTheme.cardRadius),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: row,
+          border: Border.all(color: AppTheme.borderSubtle, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: row,
+            ),
           ),
         ),
       );

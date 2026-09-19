@@ -142,8 +142,16 @@ class ResidentDetailViewModel extends ChangeNotifier {
       final envelope = await _eventRepo.listCareEvents(resident.id);
       
       // Privacy filtering: Do not expose resident_only events to family UI
+      // and respect category-level sharing preferences.
       final familyEvents = envelope.data
           .where((e) => e.visibility != Visibility.residentOnly)
+          .where((e) {
+            return switch (e) {
+              MedicationEvent() => resident.sharingPreferences.shareMedicationStatus,
+              MealEvent() => resident.sharingPreferences.shareMealStatus,
+              ActivityEvent() => resident.sharingPreferences.shareActivityDetails,
+            };
+          })
           .toList(growable: false);
 
       _events = SectionState(status: SectionStatus.ready, data: familyEvents);
