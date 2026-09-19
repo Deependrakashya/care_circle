@@ -66,10 +66,10 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
                   Text(
                     _greeting,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppTheme.textTertiary,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.1,
-                        ),
+                      color: AppTheme.textTertiary,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 0.1,
+                    ),
                   ),
                   const SizedBox(height: 4),
 
@@ -119,7 +119,9 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
 
   // ─── Reassurance hero ────────────────────────────────────────────────────────
   Widget _buildSummarySection(
-      BuildContext context, ResidentDetailViewModel viewModel) {
+    BuildContext context,
+    ResidentDetailViewModel viewModel,
+  ) {
     if (viewModel.summary.status == SectionStatus.loading ||
         viewModel.summary.status == SectionStatus.initial) {
       return _ReassuranceSkeleton();
@@ -138,7 +140,8 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
         viewModel.latestCareUpdate ?? (summary?.generatedAt ?? DateTime.now());
 
     final now = DateTime.now().toUtc();
-    final isStale = summary == null ||
+    final isStale =
+        summary == null ||
         (now.difference(summary.generatedAt).inHours > 24 ||
             now.day != summary.generatedAt.day);
 
@@ -164,7 +167,8 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
 
     return ReassuranceCard(
       headline: summary.headline,
-      explanation: viewModel.derivedExplanation ??
+      explanation:
+          viewModel.derivedExplanation ??
           (summary.highlights.isNotEmpty ? summary.highlights.first : null),
       lastUpdated: latestUpdate,
       isInsufficientData: false,
@@ -174,7 +178,9 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
 
   // ─── Events section ───────────────────────────────────────────────────────────
   Widget _buildEventsSection(
-      BuildContext context, ResidentDetailViewModel viewModel) {
+    BuildContext context,
+    ResidentDetailViewModel viewModel,
+  ) {
     if (viewModel.events.status == SectionStatus.loading ||
         viewModel.events.status == SectionStatus.initial) {
       return const SizedBox.shrink();
@@ -192,6 +198,7 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
           children: [
             Text(
               "Today's moments",
+
               style: Theme.of(context).textTheme.titleLarge,
             ),
             if (events.isNotEmpty)
@@ -204,13 +211,16 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
                 ),
                 behavior: HitTestBehavior.opaque,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 8,
+                  ),
                   child: Text(
                     'See all',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      color: AppTheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -273,7 +283,9 @@ class _ResidentDetailViewState extends State<ResidentDetailView> {
 
   // ─── Check-in CTA ─────────────────────────────────────────────────────────────
   Widget _buildCheckInCta(
-      BuildContext context, ResidentDetailViewModel viewModel) {
+    BuildContext context,
+    ResidentDetailViewModel viewModel,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.surface,
@@ -394,8 +406,11 @@ class _Shimmer extends StatelessWidget {
   final double width;
   final double height;
   final double radius;
-  const _Shimmer(
-      {required this.width, required this.height, required this.radius});
+  const _Shimmer({
+    required this.width,
+    required this.height,
+    required this.radius,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -429,9 +444,9 @@ class _EmptyMoments extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             'No recent updates yet',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppTheme.textSecondary,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: AppTheme.textSecondary),
           ),
           const SizedBox(height: 4),
           Text(
@@ -459,31 +474,35 @@ class _ErrorSurface extends StatelessWidget {
         color: AppTheme.semanticCaution.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(AppTheme.cardRadius),
         border: Border.all(
-            color: AppTheme.semanticCaution.withValues(alpha: 0.25), width: 1),
+          color: AppTheme.semanticCaution.withValues(alpha: 0.25),
+          width: 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.info_outline_rounded,
-                  color: AppTheme.semanticCaution, size: 18),
+              const Icon(
+                Icons.info_outline_rounded,
+                color: AppTheme.semanticCaution,
+                size: 18,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Temporarily unavailable',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppTheme.semanticCaution,
-                    ),
+                  color: AppTheme.semanticCaution,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             message,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: AppTheme.textSecondary),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppTheme.textSecondary),
           ),
           if (onRetry != null) ...[
             const SizedBox(height: 14),
@@ -491,8 +510,10 @@ class _ErrorSurface extends StatelessWidget {
               onPressed: onRetry,
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(120, 40),
-                side:
-                    const BorderSide(color: AppTheme.semanticCaution, width: 1),
+                side: const BorderSide(
+                  color: AppTheme.semanticCaution,
+                  width: 1,
+                ),
                 foregroundColor: AppTheme.semanticCaution,
               ),
               child: const Text('Retry'),

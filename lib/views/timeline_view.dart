@@ -36,16 +36,21 @@ class _TimelineContent extends StatelessWidget {
         state.data != null &&
         state.data!.isNotEmpty) {
       final now = DateTime.now().toUtc();
-      final allToday = state.data!.every((e) =>
-          e.recordedAt.day == now.day &&
-          e.recordedAt.month == now.month &&
-          e.recordedAt.year == now.year);
+      final allToday = state.data!.every(
+        (e) =>
+            e.recordedAt.day == now.day &&
+            e.recordedAt.month == now.month &&
+            e.recordedAt.year == now.year,
+      );
       if (allToday) title = "Today's moments";
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => Navigator.pop(context),
@@ -80,7 +85,10 @@ class _TimelineContent extends StatelessWidget {
 
   // ─── Timeline list ────────────────────────────────────────────────────────
   Widget _buildTimeline(
-      BuildContext context, List<CareEvent> events, TimelineViewModel vm) {
+    BuildContext context,
+    List<CareEvent> events,
+    TimelineViewModel vm,
+  ) {
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
       itemCount: events.length,
@@ -109,15 +117,18 @@ class _TimelineContent extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off_outlined,
-                size: 44, color: AppTheme.textTertiary),
+            const Icon(
+              Icons.cloud_off_outlined,
+              size: 44,
+              color: AppTheme.textTertiary,
+            ),
             const SizedBox(height: 16),
             Text(
               'Some information is temporarily unavailable.',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: AppTheme.textSecondary,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: AppTheme.textSecondary),
             ),
             const SizedBox(height: 8),
             Text(
@@ -144,14 +155,17 @@ class _TimelineContent extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.wb_sunny_outlined,
-                size: 44, color: AppTheme.textTertiary),
+            const Icon(
+              Icons.wb_sunny_outlined,
+              size: 44,
+              color: AppTheme.textTertiary,
+            ),
             const SizedBox(height: 16),
             Text(
               'No recent updates yet',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: AppTheme.textSecondary,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(color: AppTheme.textSecondary),
             ),
             const SizedBox(height: 6),
             Text(
@@ -176,10 +190,10 @@ class _TimelineRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDelayed = _isDelayed(event);
-    final dotColor  = isDelayed ? AppTheme.semanticCaution : AppTheme.primary;
-    final timeStr   = _formatTime(event.recordedAt);
-    final title     = _title(event);
-    final detail    = _detail(event);
+    final dotColor = isDelayed ? AppTheme.semanticCaution : AppTheme.primary;
+    final timeStr = _formatTime(event.recordedAt);
+    final title = _title(event);
+    final detail = _detail(event);
 
     return IntrinsicHeight(
       child: Row(
@@ -226,11 +240,12 @@ class _TimelineRow extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.only(bottom: isLast ? 0 : 12),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
-                  color: isDelayed
-                      ? const Color(0xFFFAEED8)
-                      : AppTheme.surface,
+                  color: isDelayed ? const Color(0xFFFAEED8) : AppTheme.surface,
                   borderRadius: BorderRadius.circular(AppTheme.cardRadius),
                   border: Border.all(
                     color: isDelayed
@@ -247,29 +262,26 @@ class _TimelineRow extends StatelessWidget {
                     Text(
                       timeStr,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: isDelayed
-                                ? AppTheme.semanticCaution.withValues(alpha: 0.8)
-                                : AppTheme.primary.withValues(alpha: 0.65),
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: isDelayed
+                            ? AppTheme.semanticCaution.withValues(alpha: 0.8)
+                            : AppTheme.primary.withValues(alpha: 0.65),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     // Event title
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
+                    Text(title, style: Theme.of(context).textTheme.titleMedium),
                     // Detail line (status + optional duration)
                     if (detail.isNotEmpty) ...[
                       const SizedBox(height: 2),
                       Text(
                         detail,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: isDelayed
-                                  ? AppTheme.semanticCaution.withValues(alpha: 0.85)
-                                  : AppTheme.textTertiary,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          color: isDelayed
+                              ? AppTheme.semanticCaution.withValues(alpha: 0.85)
+                              : AppTheme.textTertiary,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                     // Optional note
@@ -312,9 +324,10 @@ class _TimelineRow extends StatelessWidget {
     return switch (e) {
       MedicationEvent() => _capitalize(e.status.name),
       MealEvent() => _capitalize(e.status.name),
-      ActivityEvent() => e.durationMinutes != null
-          ? '${_capitalize(e.status.name)} · ${e.durationMinutes} min'
-          : _capitalize(e.status.name),
+      ActivityEvent() =>
+        e.durationMinutes != null
+            ? '${_capitalize(e.status.name)} · ${e.durationMinutes} min'
+            : _capitalize(e.status.name),
     };
   }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter/services.dart';
+
 import '../theme/app_theme.dart';
 import '../view_models/resident_detail_view_model.dart';
 import '../view_models/residents_view_model.dart';
@@ -14,6 +16,8 @@ class RootView extends StatefulWidget {
 }
 
 class _RootViewState extends State<RootView> {
+  DateTime? _lastPressedAt;
+
   @override
   void initState() {
     super.initState();
@@ -26,7 +30,7 @@ class _RootViewState extends State<RootView> {
   Widget build(BuildContext context) {
     final viewModel = context.watch<ResidentsViewModel>();
 
-    return switch (viewModel.status) {
+    final content = switch (viewModel.status) {
       ResidentsStatus.initial || ResidentsStatus.loading => const _LoadingState(),
       ResidentsStatus.error => _MessageState(
           icon: Icons.cloud_off_outlined,
@@ -70,6 +74,28 @@ class _RootViewState extends State<RootView> {
           );
         }(),
     };
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        final now = DateTime.now();
+        if (_lastPressedAt == null ||
+            now.difference(_lastPressedAt!) > const Duration(seconds: 2)) {
+          _lastPressedAt = now;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Press back again to exit'),
+              duration: Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        } else {
+          SystemNavigator.pop();
+        }
+      },
+      child: content,
+    );
   }
 }
 
