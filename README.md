@@ -24,14 +24,10 @@ flutter build apk --release
 
 **APK Delivery**: An Android release APK has been successfully built and is located at `build/app/outputs/flutter-apk/app-release.apk`. 
 
-The supplied reference Expo project has dependencies installed in this workspace; its baseline check passed on 2026-09-19:
+> [!NOTE]
+> **Keystore Inclusion**: For the purpose of this hackathon submission, the `upload-keystore.jks` and `key.properties` files have been deliberately committed to version control. This ensures that evaluators can seamlessly build the release APK (`flutter build apk --release`) out-of-the-box without needing to generate their own signing keys or configure build scripts. This is strictly for hackathon evaluation convenience and does not reflect standard production security practices. 
 
-```sh
-cd ../PSI_CareCircle_Candidate_Starter_Code
-npm run typecheck
-```
 
-For clean reference setup, the brief specifies Node.js 22.13+ or 24.3+ and `npm install` before that check. Preserve the supplied lockfile.
 
 ## Scope, architecture, and privacy
 
@@ -47,7 +43,7 @@ Omitted intentionally: authentication, onboarding, backend, admin portal, chat, 
 
 Fictional fixture date: 2026-09-19. IDs: `resident-meera`, `resident-devendra`; both use `Asia/Kolkata`. Includes sparse/stale summaries, private records, malformed timeline data, nulls, and broken media. No credentials. Incident is off; activate only following an official bulletin. The full TypeScript mock API contract was ported accurately to Dart.
 
-Resident assets are bundled, so running the current app needs no sibling folder. See `assets/data/README.md` for source provenance. Reference location for remaining work: `../PSI_CareCircle_Candidate_Starter_Code/`. Preserve the authoritative contract/fixtures in final source handover.
+Resident assets are bundled, so running the current app needs no sibling folder. See `assets/data/README.md` for source provenance. Preserve the authoritative contract/fixtures in final source handover.
 
 ## Vitals incident simulation
 
@@ -77,7 +73,7 @@ currently active official incident.
 
 ## Verification and delivery
 
-Supplied TypeScript baseline: PASS. Flutter analysis: PASS. Android APK build: SUCCESS (`app-release.apk`). Automated test result is tracked in TEST_PLAN.
+Flutter analysis: PASS. Android APK build: SUCCESS (`app-release.apk`). Automated test result is tracked in TEST_PLAN.
 
 Participant ID: pending. Freeze commit: pending. Final submission commit: pending. Neither project was a Git repository at inspection. See [SUBMISSION_STATUS](docs/SUBMISSION_STATUS.md) for artifacts, video limits, permissions, and deadlines.
 
